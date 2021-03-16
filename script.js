@@ -3,6 +3,7 @@
 let activePlayer = 0;
 let currentScore = 0;
 let totalScore = [0, 0];
+let isGameFinished = false;
 const minScoreToWin = 100;
 
 const buttonRoll = document.querySelector(".btn--roll");
@@ -16,6 +17,8 @@ const labelCurrentScore = document.querySelectorAll(".current-score");
 document.addEventListener("DOMContentLoaded", newGame);
 
 buttonRoll.addEventListener("click", function () {
+  if (isGameFinished) return;
+
   const diceNumber = Math.trunc(Math.random() * 6) + 1;
   showDice(diceNumber);
 
@@ -24,6 +27,8 @@ buttonRoll.addEventListener("click", function () {
 });
 
 buttonHold.addEventListener("click", function () {
+  if (isGameFinished) return;
+
   totalScore[activePlayer] += currentScore;
   labelScore[activePlayer].textContent = totalScore[activePlayer];
   setCurrentScoreToZero();
@@ -35,6 +40,7 @@ buttonHold.addEventListener("click", function () {
 buttonNew.addEventListener("click", newGame);
 
 function newGame() {
+  isGameFinished = false;
   resetUI();
   hideDice();
   setCurrentScoreToZero();
@@ -48,6 +54,8 @@ const resetUI = function () {
 
   activePlayer = 0;
   playerPanel[activePlayer].classList.add("player--active");
+
+  confetti.reset();
 };
 
 const showDice = function (diceNumber) {
@@ -84,6 +92,14 @@ const setTotalScoreToZero = function () {
 };
 
 const playerWins = function () {
+  isGameFinished = true;
+
+  confetti({
+    particleCount: 250,
+    spread: 100,
+    origin: { y: 0.7 },
+  });
+
   playerPanel[activePlayer].classList.add("player--winner");
   hideDice();
 };
